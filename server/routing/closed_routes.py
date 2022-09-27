@@ -10,6 +10,7 @@ def restructure_game(game):
             "player0id": game.player0id, 
             "player1id": game.player1id, 
             "status": game.status, 
+            "result": game.result,
             "gameasjson": game.gameasjson,
             "last_change": game.last_change,
             "time_started": game.time_started}

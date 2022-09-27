@@ -75,13 +75,12 @@ def join_game(userid):
         return { "response": "New game created. Invite open." }
 
 def end_game(game):
-    if "gameasjson" in game:
-        gameasjson = json.load(game["gameasjson"])
-        gameasjson["status"] = "Ended"
-        game["draw_proposed"] = None
-        game["last_change"] = utc_time()
-        game["gameasjson"] = gameasjson
-        db.session.commit()
+    gameasjson = json.load(game["gameasjson"])
+    gameasjson["status"] = "Ended"
+    game["draw_proposed"] = None
+    game["last_change"] = utc_time()
+    game["gameasjson"] = gameasjson
+    db.session.commit()
 
 def start_game(game, user):
     game.time_started = utc_time()
@@ -96,6 +95,7 @@ def change_element_in_db(gameid, dict_of_changes):
     if game:
         for item, new_value in dict_of_changes.items():
             setattr(game, item, new_value)
+    db.session.commit()        
 
 def add_stat_to_user(userid, single_stat):
     user = get_user_by_id(userid)

@@ -18,7 +18,7 @@ services:
       - ${REACT_APP_BACKEND_PORT}
     build:
       context: .
-      dockerfile: server/DockerfileForCompose
+      dockerfile: ${DOCKERFILE_FOR_BACKEND}
     env_file: '.env'  
     ports:
       - "${REACT_APP_BACKEND_PORT}:${REACT_APP_BACKEND_PORT}"

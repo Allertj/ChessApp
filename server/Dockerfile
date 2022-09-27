@@ -6,4 +6,4 @@ COPY requirements.txt .
 RUN . /opt/venv/bin/activate && pip3 install -r requirements.txt
 
 COPY . /app
-CMD . /opt/venv/bin/activate && exec python app/main.py
+CMD . /opt/venv/bin/activate && exec python app/main.py      --config

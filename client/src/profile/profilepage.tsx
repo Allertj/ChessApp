@@ -81,7 +81,8 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson) => void,
                           props.handleLogout) 
   }
   const loadedGameRetrieved = (data: GameData) => {
-      let color = (data.player1id === props.userdata.id ? 1 : 0)
+      let color = (data.player1id == props.userdata.id ? 1 : 0)
+    //   console.log("RECEIVED COLOR = ${}", color, data.player0id, data.player1id, props.userdata.id)
       let gamedata = JSON.parse(data.gameasjson, reviver)       
       gamedata.color = color
       gamedata.id = data._id

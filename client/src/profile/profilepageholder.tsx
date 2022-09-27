@@ -12,6 +12,7 @@ interface GameProfileProps {
 }
 
 const createGameProfile = (data: GameProfileProps) => {
+  
   let games =  data.retrievedGames.map((game: GameData) => {
    return <GameProfile key={game._id} 
                          loadGame={data.loadGame}

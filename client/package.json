@@ -54,7 +54,7 @@
     "startSSL": "export HTTPS=true&&SSL_CRT_FILE=cert.crt&&SSL_KEY_FILE=key.pem react-scripts start",
     "start": "react-scripts start",
     "start2": "cp ${ENV:-'../.env'} .env && react-scripts start",
-    "start3": "cp ${ENV:-'../.env'} .env && export PORT=3006 react-scripts start",
+    "start3": "cp ${ENV:-'../.env'} .env && export react-scripts start",
     "build": "react-scripts build",
     "test": "jest -i testEnviroment=node  --runInBand server/tests/ -t \"\"",
     "testreact": "react-scripts test --env=jsdom",
