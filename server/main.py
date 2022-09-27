@@ -30,5 +30,15 @@ app.register_blueprint(open)
 app.register_blueprint(closed)
 
 if __name__ == '__main__':
-    # app.run(host='0.0.0.0', port= int(os.environ.get("BACKEND_PORT")))
-    eventlet.wsgi.server(eventlet.listen(("0.0.0.0",  int(os.environ.get("BACKEND_PORT")))), app)
+    host = "0.0.0.0"
+    port = int(os.environ.get("REACT_APP_BACKEND_PORT"))
+    
+    if str(os.environ.get("USE_SSL_IN_BACKEND")) == "True":
+        cert = "cert.pem"
+        key  = "key.pem"
+        eventlet.wsgi.server(eventlet.wrap_ssl(eventlet.listen((host, port)),
+                                               certfile=cert, 
+                                               keyfile= key,
+                                               server_side = True) ,app)
+    else:
+        eventlet.wsgi.server(eventlet.listen((host, port)), app)  

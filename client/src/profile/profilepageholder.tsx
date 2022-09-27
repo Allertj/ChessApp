@@ -28,7 +28,7 @@ const createGameProfile = (data: GameProfileProps) => {
 } 
 
 const ProfilePageHolder = (data: GameProfileProps) => {   
-    let {W,D,L} = JSON.parse(data.userstats.stats)
+    let {W,D,L} = data.userstats.stats
     return (
        <div className="profile">
           <div className="statistics">  

@@ -1,16 +1,17 @@
 from flask_socketio import SocketIO, join_room, emit, disconnect
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, decode_token, exceptions
 from jwt.exceptions import DecodeError
-from database.db_functions import get_user_by_username, change_element_in_db, end_game_and_add_statistics
+from database.db_functions import get_user_by_id, change_element_in_db, end_game_and_add_statistics, get_game_by_id
 import json
 
-socketio = SocketIO()
+socketio = SocketIO(cors_allowed_origins="*")
 
 @socketio.on('connect')
 def verify_connection(message):
+    # print("MESSAGE", message)
     try:
         result = decode_token(message["token"])
-        user = get_user_by_username(result['sub'])
+        user = get_user_by_id(result['sub'])
         if result["type"] != "access" or user.id != message["id"]:
             disconnect()
     except(DecodeError, exceptions.NoAuthorizationError, exceptions.FreshTokenRequired):
@@ -19,8 +20,13 @@ def verify_connection(message):
 @socketio.on('initiate')
 def player_joins_game(message):
     gameid = str(message["gameid"])
-    join_room(gameid)
-    emit("connectaaa", f"connected to ${gameid}", broadcast=True, room=gameid, include_self=True)
+    userid = str(message["sender"])
+    game = get_game_by_id(gameid)
+    if userid == game.player1id or userid == game.player0id:
+        join_room(gameid)
+        emit("connectaaa", f"connected to ${gameid}", broadcast=True, room=gameid, include_self=True)
+    else:
+        disconnect()    
 
 @socketio.on('move')
 def player_made_move(message):

@@ -6,32 +6,19 @@ services:
     build:
       context: .
       dockerfile: ${DOCKERFILE_FOR_FRONTEND}
-    volumes:
-      - '.:/app'
-      - '/app/node_modules'
+    env_file: '.env' 
     ports:
       - ${PRODUCTION_PORT}:${INTERNAL_NGINX_PORT}
     environment:
       - CHOKIDAR_USEPOLLING=true
-      
+
   backendsocket: 
     container_name: 'backendsocket'
     expose:
       - ${REACT_APP_BACKEND_PORT}
     build:
       context: .
-      dockerfile: docker/DockerfileServer
-    volumes:
-      - '.:/app'
-      - '/app/node_modules'  
+      dockerfile: server/DockerfileForCompose
+    env_file: '.env'  
     ports:
       - "${REACT_APP_BACKEND_PORT}:${REACT_APP_BACKEND_PORT}"
-
-  # mongo:
-  #   image: 'mongo' 
-  #   command: "mongod --port ${DBPORT}"
-  #   container_name: 'mongo'
-  #   environment:
-  #     - MONGO_INITDB_DATABASE=${DBNAME}"
-  #   volumes:
-  #     - ./mongo-volume:/data/db

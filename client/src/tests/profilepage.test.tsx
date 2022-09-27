@@ -47,7 +47,7 @@ let UserData = {  id : "someid",
                   accessToken: "token",
                   username: "username",
                   email: "email",
-                  stats : "{W: 5, D: 6, L:8}",
+                  stats : {W: 5, D: 6, L:8},
                   open_games: 10,
                   roles: ["USER"] }
 
@@ -70,7 +70,7 @@ test('react tests - Profile', () => {
          loadGame={()=>{}} 
          userdata={UserData}
          retrievedGames={[gameData]}
-         userstats={{stats: '{"W":1,"D":0,"L":0}', open_games:4}}
+         userstats={{stats: {"W":1,"D":0,"L":0}, open_games:4}}
          setShowCurrent={()=>{}} 
          showCurrent={false}/></Router>);
   expect(screen.getByText('WINS')).toBeInTheDocument()

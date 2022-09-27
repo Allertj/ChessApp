@@ -15,7 +15,7 @@ def signup():
     password = request.json.get("password")
     email = request.json.get("email")
     message = create_user(username, password, email)
-    return { "message": message }
+    return { "msg": message }
 
 @open.route("/api/auth/signin", methods=["POST"])
 def signin():

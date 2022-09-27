@@ -3,14 +3,23 @@ interface UserData {
     accessToken: string
     username: string,
     email: string,
-    stats : string,
+    stats : Stats,
     open_games: number,
     roles: Array<string>
     message?: string
 }
+interface Stats {
+    W: number, 
+    D: number, 
+    L: number,
+}
+
+interface ErrorMessage {
+    msg: string
+}
 
 interface UserStats {
-    stats: string
+    stats: Stats
     open_games: number
 }
 
@@ -53,4 +62,4 @@ type MoveNotation = {
     notation: string
 }
 
-export type {UserData, GameAsJson, GameData, UserStats, MoveNotation}
+export type {UserData, GameAsJson, GameData, UserStats, MoveNotation, ErrorMessage}

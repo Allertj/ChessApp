@@ -4,13 +4,15 @@ import { makePOSTRequestAuth, makeGETRequestAuth } from '../misc/requests'
 import { server } from '../config'
 import { reviver} from '../misc/helper'
 import {ProfilePageHolder} from './profilepageholder'
-import {UserData, GameAsJson, GameData, UserStats} from '../interfaces/interfaces'
+import {UserData, GameAsJson, GameData, UserStats, ErrorMessage} from '../interfaces/interfaces'
 
-const ProfilePage = (props :{handlechoice: (data:GameAsJson)=> void, userdata: UserData}) => {
+const ProfilePage = (props :{handlechoice: (data:GameAsJson) => void, 
+                             userdata: UserData,
+                             handleLogout: () => void}) => {
   let navigate = useNavigate();
   let [showCurrent, setShowCurrentState] = React.useState(true)
   let [retrieveGames, setRetrieveGames] = React.useState<GameData[]>([])
-  let [userstats, setUserStatsState] = React.useState({stats: "{\"W\":0, \"D\":0, \"L\":0}", open_games: 0,})
+  let [userstats, setUserStatsState] = React.useState({stats: {W:0, D:0, L:0}, open_games: 0,})
 
   React.useEffect(() => {    
           askNewGames()
@@ -26,7 +28,12 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson)=> void, userdata: U
   }, [])
 
   const askUserStats = () => {
-    makeGETRequestAuth(`${server}/profile/${props.userdata.id}/stats`, setUserStats, "", props.userdata.accessToken)
+    // handleLogout()
+    makeGETRequestAuth(`${server}/profile/${props.userdata.id}/stats`, 
+                        setUserStats, 
+                        "", 
+                        props.userdata.accessToken, 
+                        props.handleLogout)
   }
   const setUserStats = (data: UserStats) => {
       setUserStatsState(data)
@@ -36,29 +43,42 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson)=> void, userdata: U
       if (!showCurrent) {
          askNewGames()
       } else {
-          makeGETRequestAuth(`${server}/profile/${props.userdata.id}/closed`, getOldGames, "", props.userdata.accessToken)
+          makeGETRequestAuth(`${server}/profile/${props.userdata.id}/closed`, 
+                              getOldGames, 
+                              "", 
+                              props.userdata.accessToken,
+                              props.handleLogout)
       }
   }
   const askNewGames = () => {
-      makeGETRequestAuth(`${server}/profile/${props.userdata.id}/open`, getNewGames, "", props.userdata.accessToken)
+      makeGETRequestAuth(`${server}/profile/${props.userdata.id}/open`, 
+                          getNewGames, 
+                          "", 
+                          props.userdata.accessToken, 
+                          props.handleLogout)
       askUserStats()  
     }
   const createNewGame = () => {
-      makePOSTRequestAuth(`${server}/newgame`, 
+      makePOSTRequestAuth(`${server}/profile/${props.userdata.id}/start`, 
                             props.userdata, 
                             askNewGames, 
                             "", 
-                            props.userdata.accessToken)
+                            props.userdata.accessToken,
+                            props.handleLogout)
                     
   }
-  const getNewGames = (data: GameData[]) => {
-      setRetrieveGames(data)
+  const getNewGames = (data: { "games" : GameData[]}) => {
+      setRetrieveGames(data.games)
   }
-  const getOldGames = (data: GameData[]) => {
-      setRetrieveGames(data) 
+  const getOldGames = (data: { "games" : GameData[]}) => {
+      setRetrieveGames(data.games) 
   }
   const loadGame = (gameid: string) => {
-    makeGETRequestAuth(`${server}/requestgamedata/${gameid}`, loadedGameRetrieved, "", props.userdata.accessToken) 
+      makeGETRequestAuth(`${server}/profile/${props.userdata.id}/open/${gameid}`, 
+                          loadedGameRetrieved, 
+                          "", 
+                          props.userdata.accessToken, 
+                          props.handleLogout) 
   }
   const loadedGameRetrieved = (data: GameData) => {
       let color = (data.player1id === props.userdata.id ? 1 : 0)

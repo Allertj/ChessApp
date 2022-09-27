@@ -7,7 +7,7 @@ interface GameId {gameid: string}
 interface Sender {sender: string}
 interface GameAsJson {gameasjson: string}
 
-interface MSGInitiate extends GameId {}
+interface MSGInitiate extends GameId, Sender {}
 interface MSGMove extends Move, GameId, Sender, GameAsJson {}
 interface MSGMoveVerified extends GameAsJson{ move: Move }                            
 interface MSGConcede extends GameId, Sender{ color: number, }                        

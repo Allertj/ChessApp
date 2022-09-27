@@ -54,7 +54,7 @@ const MainContainer = (data: {gamedata: GameAsJson, userdata: UserData}) => {
         }, [data.gamedata.draw_proposed, data.userdata.id])
 
         React.useEffect(() => {
-            socketCom.SendInitiation({gameid: game.id})           
+            socketCom.SendInitiation({gameid: game.id, sender: data.userdata.id})           
         }, [game.id]);
                                
         const concede = () => {

@@ -12,7 +12,7 @@ const makePOSTRequest = (address: string, body: any, callback: (data: any)=> voi
         else { callback(data)}})      
   }
   
-  const makeGETRequestAuth = (address: string, callback: (data: any) => void, attr: string, token: string) => {  
+  const makeGETRequestAuth = (address: string, callback: (data: any) => void, attr: string, token: string, failcallback: () => void) => {  
     const requestOptions = {
       method: 'GET',
       headers: { 'Content-Type': 'application/json',
@@ -21,11 +21,19 @@ const makePOSTRequest = (address: string, body: any, callback: (data: any)=> voi
     fetch(address, requestOptions)
       .then(response => response.json() )
       .then(data => { 
+        if (data.msg != undefined) {
+          failcallback()
+        }
         if (attr) { callback(data[attr]) } 
         else { callback(data)}});         
   }
 
-  const makePOSTRequestAuth = (address: string, body : any, callback: (data: any)=> void, attr: string, token: string) => {  
+  const makePOSTRequestAuth = (address: string, 
+                               body : any, 
+                               callback: (data: any)=> void, 
+                               attr: string, 
+                               token: string, 
+                               failcallback: () => void) => {  
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json',

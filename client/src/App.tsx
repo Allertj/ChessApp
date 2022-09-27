@@ -7,12 +7,15 @@ import { Register} from './items/register'
 import { Routes, Route, useNavigate } from "react-router-dom";
 import {UserData, GameAsJson} from './interfaces/interfaces'
 
-const StandardScreen = ({userdata, chooseGame, saveUserData}: 
+const StandardScreen = ({userdata, chooseGame, saveUserData, handleLogout}: 
                         {userdata: UserData | undefined, 
                         chooseGame: (data: GameAsJson) => void, 
-                        saveUserData: (data: UserData) => void}) => {
+                        saveUserData: (data: UserData) => void,
+                        handleLogout: () => void}) => {
     if (userdata) { 
-      return <ProfilePage userdata={userdata} handlechoice={chooseGame}/>
+      return <ProfilePage userdata={userdata} 
+                          handlechoice={chooseGame}
+                          handleLogout={handleLogout}/>
     } else { 
       return <LoginScreen login={saveUserData}/>
     }
@@ -45,7 +48,11 @@ const Page = () => {
       setUserData(undefined)
       navigate("/login", { replace: true });
   }
-  let standard = < StandardScreen userdata={userdata} saveUserData={saveUserData} chooseGame={chooseGame}/>
+  let standard = < StandardScreen userdata={userdata} 
+                                  handleLogout={handleLogout} 
+                                  saveUserData={saveUserData} 
+                                  chooseGame={chooseGame}/>
+
   return (<div className="main-container">
             
             <NavBar handleLogout={handleLogout}  

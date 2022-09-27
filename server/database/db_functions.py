@@ -11,7 +11,7 @@ from .newgame import game as gameasjson
 from .utc_time import utc_time
 
 load_dotenv()
-MAX_OPEN_GAMES = int(os.getenv("MAX_OPEN_GAMES"))
+MAX_OPEN_GAMES = int(os.environ.get("MAX_OPEN_GAMES"))
 
 def create_user(username, password, email):
     password_hash = generate_password_hash(password)
@@ -38,9 +38,9 @@ def get_all_games_from_user(userid):
 def get_user_stats(userid):
     user =  User.query.filter_by(id=userid).first()
     if user:
-        return { "stats": user.stats, "open_games" : user.open_games}
+        return { "stats": json.loads(user.stats), "open_games" : user.open_games}
     else:
-        return { "message": "No such user"}
+        return { "msg": "No such user"}
 
 def get_user_by_username(username):
     return User.query.filter_by(username=username).first()
@@ -60,12 +60,12 @@ def create_new_game(userid):
     db.session.commit()
     return game                
 
-def join_game(username):
-    user = get_user_by_username(username)
+def join_game(userid):
+    user = get_user_by_id(userid)
     if not user:
-        return {"response", "User not found"}  
+        return {"msg", "User not found"}  
     if user.open_games >= MAX_OPEN_GAMES:
-        return { "response": "All Slots filled" }
+        return { "msg": "All Slots filled" }
     game =  Games.query.filter(Games.player0id != user.id, Games.player1id == "0").first()
     if game:
         start_game(game, user)
@@ -133,5 +133,3 @@ def create_db(app, database_url):
     if not database_exists(database_url):
         with app.app_context():
             db.create_all()
-
-
