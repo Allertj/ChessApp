@@ -1,22 +1,22 @@
-name: ChessApp Continuous Integration - Unittests Backend
+# name: ChessApp Continuous Integration - Unittests Backend
 
-on: 
-  push: 
-    branches:
-      - master 
+# on: 
+#   push: 
+#     branches:
+#       - master 
 
-env:
-  REACT_APP_SECRET: ${{ secrets.REACT_APP_SECRET }}   
+# env:
+#   REACT_APP_SECRET: ${{ secrets.REACT_APP_SECRET }}   
 
-jobs: 
-  deploy: 
-    runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@master
-      - uses: actions/setup-node@v1
-        with: 
-          node-version: 16          
-      - run: cp docker/server-package.json ./package.json
-      - run: npm install
-      - run: npm install react-scripts@5.0.1 -g 
-      - run: npm test
+# jobs: 
+#   deploy: 
+#     runs-on: ubuntu-latest
+#     steps: 
+#       - uses: actions/checkout@master
+#       - uses: actions/setup-node@v1
+#         with: 
+#           node-version: 16          
+#       - run: cp docker/server-package.json ./package.json
+#       - run: npm install
+#       - run: npm install react-scripts@5.0.1 -g 
+#       - run: npm test

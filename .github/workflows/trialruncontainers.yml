@@ -3,7 +3,7 @@ name: ChessApp Continuous Integration - Docker compose Trial run
 on: 
   push: 
     branches:
-      - master 
+      - main 
 
 env:
   REACT_APP_SECRET: ${{ secrets.REACT_APP_SECRET }}     
@@ -16,8 +16,6 @@ jobs:
       - uses: actions/setup-node@v1
         with: 
           node-version: 16       
-      - run: npm install
       - run: docker-compose build
       - run: docker-compose up -d
       - run: node .github/workflows/dockerrun.js
-

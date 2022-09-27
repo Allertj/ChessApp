@@ -9,7 +9,7 @@ setTimeout(() => {
             process.exit(1)
         }
         console.log(stdout);
-        if (stdout.includes("mongo") && stdout.includes("chessapp") && stdout.includes("backendsocket")) {
+        if (stdout.includes("chessapp") && stdout.includes("backendsocket")) {
             process.exit(0)
         } else {
             process.exit(1)
