@@ -5,7 +5,7 @@ from credentials.initialize import authenticate
 
 open = Blueprint("open_routes", __name__)
 
-@open.route("/checkout")
+@open.route("/check")
 def check_server():
     return "SERVER WORKING PROPERLY"
 

@@ -7,7 +7,7 @@ import json
 socketio = SocketIO(cors_allowed_origins="*")
 
 @socketio.on('connect')
-def verify_connection(message):
+def verify_connection(message: dict):
     try:
         result = decode_token(message["token"])
         user = get_user_by_id(result['sub'])
@@ -17,73 +17,79 @@ def verify_connection(message):
         disconnect()
 
 @socketio.on('initiate')
-def player_joins_game(message):
+def player_joins_game(message: dict):
     gameid = str(message["gameid"])
-    userid = str(message["sender"])
+    userid = message["sender"]
     game = get_game_by_id(gameid)
     if userid == game.player1id or userid == game.player0id:
         join_room(gameid)
-        emit("connectaaa", f"connected to ${gameid}", broadcast=True, room=gameid, include_self=True)
+        emit("user_connected", f"{userid} has connected to game {gameid}", broadcast=True, room=gameid, include_self=True)
     else:
         disconnect()    
 
 @socketio.on('move')
-def player_made_move(message):
+def player_made_move(message: dict):
     gameid = str(message["gameid"])
-    change_element_in_db(gameid, {"unverified_move": str(message)})
+    change_element_in_db(gameid, {"unverified_move": json.dumps(message)})
     emit("othermove", message, broadcast=True, room=gameid, include_self=False)
 
 @socketio.on('promotion')
-def player_made_a_promotion(message):
+def player_made_a_promotion(message: dict):
     gameid = str(message["gameid"])
     emit("promotion_received", message, broadcast=True, room=gameid, include_self=False)
 
 @socketio.on('propose_draw')
-def player_proposed_draw(message):
+def player_proposed_draw(message: dict):
     gameid = str(message["gameid"])
-    change_element_in_db(gameid, {"draw_proposed": str({"sender": message["sender"]})})
+    change_element_in_db(gameid, {"draw_proposed": json.dumps({"sender": message["sender"]})})
     emit("draw_proposed", message, broadcast=True, room=gameid, include_self=False)
         
 @socketio.on('draw_accepted')
-def player_accepted_draw(message):
+def player_accepted_draw(message: dict):
     gameid = str(message["gameid"])
     gameasjson = json.loads(message["gameasjson"])
     gameasjson["status"] = "Draw"
     sender = message["sender"]
-    change_element_in_db(gameid, {"result": """{"draw": "true", "by": "Proposal", "notes": "accepted by """ + sender + """}""", 
+    result = {"draw": "true", "by": "Proposal", "notes": f"accepted by {sender}"}
+    change_element_in_db(gameid, {"result": json.dumps(result), 
                                   "status": "Ended", 
-                                  "gameasjson": str(gameasjson),
+                                  "gameasjson": json.dumps(gameasjson),
                                   "draw_proposed": ""})
-    emit("draw_finalised", str({"result": "accepted"}), broadcast=True, room=gameid, include_self=False)
+    emit("draw_finalised", json.dumps({"result": "accepted"}), broadcast=True, room=gameid, include_self=False)
     end_game_and_add_statistics(gameid, True, None, None)
                                   
 @socketio.on('draw_declined')
-def other_player_declined_draw(message):
+def other_player_declined_draw(message: dict):
     gameid = str(message["gameid"])
     change_element_in_db(gameid, {"draw_proposed": ""})
     emit("draw_finalised", {"result": "declined"}, broadcast=True, room=gameid, include_self=False)     
 
 @socketio.on('concede')
-def player_conceded(message):
+def player_conceded(message: dict):
     gameid = str(message["gameid"])
-    change_element_in_db(gameid,{"result": """{"draw": "false", "loser": """ + message["sender"] + """, "by": "Concession"}""", "status": "Ended"})
+    result = {"draw": "false", "loser": message["sender"], "by": "Concession"}
+    change_element_in_db(gameid,{"result": json.dumps(result)})
     end_game_and_add_statistics(gameid, False, None, message["sender"])
     emit("other_player_has_conceded", message, broadcast=True, room=gameid, include_self=False)            
 
 @socketio.on('move_verified')
-def move_was_verified(message):
+def move_was_verified(message: dict):
     gameid = str(message["move"]["gameid"])
     current_game = json.loads(message["move"]["gameasjson"])
     if current_game["status"] == "Checkmate":
-        value = {"result": """{"draw": "false", "winner": """ + message["move"]["sender"] + """, "by": "Checkmate"}""", "status": "Ended"}
+        result = json.dumps({"draw": "false", "winner": message["move"]["sender"], "by": "Checkmate"})
+        value = {"result": result, "status": "Ended"}
         change_element_in_db(message["move"]["gameid"], value)
         end_game_and_add_statistics(gameid, False, message["sender"], None)
         return
     if current_game["status"] == "Stalemate":     
-        value = {"result": str({"draw": "true", "by": "Stalemate"}), "status": "Stalemate"}
+        value = {"result": json.dumps({"draw": "true", "by": "Stalemate"}), "status": "Stalemate"}
         change_element_in_db(message["move"]["gameid"], value)
         end_game_and_add_statistics(gameid, True, None, None)
         return
     game = get_game_by_id(gameid)
+    print("CLEARED 1")
+    print(json.loads(game.unverified_move), json.loads(str(message["move"])))
     if game.unverified_move == str(message["move"]):
-        change_element_in_db(message["move"]["gameid"], {"gameasjson": message["gameasjson"], "unverified_move": ""})
+
+        change_element_in_db(message["move"]["gameid"], {"gameasjson": message["gameasjson"], "unverified_move": None})
