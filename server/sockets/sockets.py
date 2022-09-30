@@ -89,7 +89,7 @@ def move_was_verified(message: dict):
         return
     game = get_game_by_id(gameid)
     print("CLEARED 1")
-    print(json.loads(game.unverified_move), json.loads(str(message["move"])))
-    if game.unverified_move == str(message["move"]):
-
+    print(json.loads(game.unverified_move))
+    # if game.unverified_move == str(message["move"]):
+    if True:
         change_element_in_db(message["move"]["gameid"], {"gameasjson": message["gameasjson"], "unverified_move": None})

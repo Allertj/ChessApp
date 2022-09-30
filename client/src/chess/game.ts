@@ -8,21 +8,28 @@ import { Knight } from './knight'
 import { Pawn } from './pawn'
 import { MoveNotation} from '../interfaces/interfaces'
 
+type Holder = {
+    [key: string]: any;
+  };
+
 class Game {
     board : Array<Array<Piece | null>> = []
     turn : Player = Player.WHITE
     id : string = "0"
     color: number = 2
     status: string = status1.PLAYING
-    passed_pawn = new Map()
-    passed_pawn_removal = new Map()
-    castling = new Map()
+    // passed_pawn = new Map()
+    // passed_pawn_removal = new Map()
+    passed_pawn_removal : Holder = {}
+    passed_pawn: Holder = {}
+    castling : Holder = {}
     promotion = {x : 8, y : 8, player : 2}
     latest_poss: Array<[number, number]>= []
     moves : Array<Array<any>>= []
     movescount = 0
     last_selected : Array<number>= []
     constructor(gameInfo:any = null) {
+        console.log("CONSTRUCTOR", this.castling)
         if (this.board.length === 0) {
             this.buildBoard(gameInfo)
         }
@@ -65,8 +72,11 @@ class Game {
         let temp : Array<[number, number]>= [];
         if (this.board[x][y] && this.board[x][y]?.player === player) {
             let poss = this.board[x][y]?.getMovements(this.board, x, y);
-            if (this.passed_pawn.has([x, y].join(","))) {
-                poss?.push(this.passed_pawn.get([x, y].join(",")));
+            // console.log([x, y].join(",") in this.passed_pawn, "GETPOSS")
+            console.log([x, y].join(","), this.passed_pawn, "GETPOSS")
+            if ([x, y].join(",") in this.passed_pawn) {
+            // if (this.passed_pawn.has([x, y].join(","))) {
+                poss?.push(this.passed_pawn[[x, y].join(",")]);
             }
             poss?.forEach(value => {
                 if (this.moveLegal(this.board, x, y, value[0], value[1], player)) {
@@ -152,12 +162,16 @@ class Game {
     }
     checkPassedPawn(x: number, y: number, destx: number, desty: number, player: Player) {
         if (Math.abs(destx - x) === 2 && this.board[destx][desty - 1] && this.board[destx][desty - 1]?.player !== player) {
-            this.passed_pawn.set([destx, desty - 1].join(","), [(destx + x) / 2, desty]);
-            this.passed_pawn_removal.set([(destx + x) / 2, desty].join(","), [destx, desty]);
+            // this.passed_pawn.set([destx, desty - 1].join(","), [(destx + x) / 2, desty]);
+            this.passed_pawn[[destx, desty - 1].join(",")] = [(destx + x) / 2, desty]
+            this.passed_pawn_removal[[(destx + x) / 2, desty].join(",")] = [destx, desty];
+            console.log(this.passed_pawn, this.passed_pawn_removal)
         }
         if (Math.abs(destx - x) === 2 && this.board[destx][desty + 1] && this.board[destx][desty + 1]?.player !== player) {
-            this.passed_pawn.set([destx, desty + 1].join(","), [(destx + x) / 2, desty]);          
-            this.passed_pawn_removal.set([(destx + x) / 2, desty].join(","), [destx, desty]);
+            // this.passed_pawn.set([destx, desty + 1].join(","), [(destx + x) / 2, desty]);
+            this.passed_pawn[[destx, desty + 1].join(",")] =  [(destx + x) / 2, desty]                      
+            this.passed_pawn_removal[[(destx + x) / 2, desty].join(",")] = [destx, desty];
+            console.log(this.passed_pawn, this.passed_pawn_removal)
         }
     }
     makeMoveInternal(board: Array<Array<Piece | null>>, x: number, y: number, destx: number, desty: number) {
@@ -168,8 +182,10 @@ class Game {
             board[destx][desty] = temp;
             temp.moved = true
         }
-        this.passed_pawn.clear();
-        this.passed_pawn_removal.clear()
+        // this.passed_pawn.clear();
+        this.passed_pawn = {}
+        // this.passed_pawn_removal.clear()
+        this.passed_pawn_removal = {}
     }
     makeCastling(x: number, y: number, destx: number, desty: number) {
         let rookmovement = new Map([[0, 2], [7, 5]]);
@@ -184,17 +200,17 @@ class Game {
         let strike = board[destx][desty] ? " X " : " - "
         this.moves.push([this.board[x][y]?.player, x, y, destx, desty, this.movescount, strike, this.board[x][y]?.letter])
         // if (player !== this.turn) { return false; }
-        if (this.passed_pawn.has([x, y].join(",")) && board[x][y]?.letter === "P") {
-            if (this.passed_pawn.get([x, y].join(",")).join(",") === [destx, desty].join(",")) {
-                let [x1, y1] = this.passed_pawn_removal.get([destx, desty].join(","))
+        if ([x, y].join(",") in this.passed_pawn && board[x][y]?.letter === "P") {
+        // if (this.passed_pawn.has([x, y].join(",")) && board[x][y]?.letter === "P") {
+            if (this.passed_pawn[[x, y].join(",")].join(",") === [destx, desty].join(",")) {
+                let [x1, y1] = this.passed_pawn_removal[[destx, desty].join(",")]
                 board[x1][y1] = null
             }
         }
-        if (this.castling.has([destx, desty].join(","))) {
+        if ([destx, desty].join(",") in this.castling) {
             this.makeCastling(x, y, destx, desty);
-
             this.turn = 1 - this.turn;
-            this.castling.clear();
+            this.castling = {}
             return true;
         }
         this.makeMoveInternal(this.board, x, y, destx, desty);
@@ -221,7 +237,11 @@ class Game {
                     let rookmove = this.moveLegal(this.board, x, y + 4, x, y + 3, player);
                     let kingmove = this.moveLegal(this.board, x, y, x, y + 2, player);
                     if (rookmove && kingmove) {
-                        this.castling.set([x, y + 4].join(","), [x, y]);
+                        // va[x, y + 4].join(",") 
+                        let bb = [x, y + 4].join(",")
+                        this.castling[bb] = [x, y]
+                        // this.castling = { aa.join(",") :  [x, y]}
+                        // this.castling.set([x, y + 4].join(","), [x, y]);
                         possible.push([x, y + 4]);
                     }
                 }
@@ -231,7 +251,9 @@ class Game {
                     let rookmove = this.moveLegal(this.board, x, y - 3, x, y - 1, player);
                     let kingmove = this.moveLegal(this.board, x, y, x, y - 2, player);
                     if (rookmove && kingmove) {
-                        this.castling.set([x, y - 3].join(","), [x, y]);
+                        let aaa = [x, y - 3].join(",")
+                        this.castling[aaa] = [x, y]
+                        // this.castling.set([x, y - 3].join(","), [x, y]);
                         possible.push([x, y - 3]);
                     }
                 }

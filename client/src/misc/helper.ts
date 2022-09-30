@@ -17,9 +17,9 @@ function reviver(key: string, value: any) {
             const {x, y, typeletter, moved, player} = value
             return Game.getInstanceOfPiece(x, y, typeletter, player, moved)
         }
-        if (value.dataType === 'Map') {
-            return new Map(value.value);
-        }
+        // if (value.dataType === 'Map') {
+            // return new Map(value.value);
+        // }
     }
     return value;
     }

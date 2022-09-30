@@ -278,16 +278,10 @@ game = """{
 	"color": "2",
 	"status": "Playing",
 	"passed_pawn": {
-		"dataType": "Map",
-		"value": []
 	},
 	"passed_pawn_removal": {
-		"dataType": "Map",
-		"value": []
 	},
 	"castling": {
-		"dataType": "Map",
-		"value": []
 	},
 	"promotion": {
 		"x": 8,
