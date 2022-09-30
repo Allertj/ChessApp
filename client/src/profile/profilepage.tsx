@@ -6,29 +6,33 @@ import { reviver} from '../misc/helper'
 import {ProfilePageHolder} from './profilepageholder'
 import {UserData, GameAsJson, GameData, UserStats, ErrorMessage} from '../interfaces/interfaces'
 
-const ProfilePage = (props :{handlechoice: (data:GameAsJson) => void, 
+const ProfilePage = (props: {handlechoice: (data:GameAsJson) => void, 
                              userdata: UserData,
                              handleLogout: () => void}) => {
+                                
   let navigate = useNavigate();
-  let [showCurrent, setShowCurrentState] = React.useState(true)
   let [retrieveGames, setRetrieveGames] = React.useState<GameData[]>([])
   let [userstats, setUserStatsState] = React.useState({stats: {W:0, D:0, L:0}, open_games: 0,})
+  let [showCurrentGames, setShowCurrentState] = React.useState(true)
 
-  React.useEffect(() => {    
-          askNewGames()
-          askUserStats()
+  const setShow = () => {
+    setShowCurrentState(showCurrentGames => !showCurrentGames)
+  }
+  React.useEffect(() => {   
+        askNewGames()
+        askUserStats()
   }, [])
-
-  React.useEffect(() => {    
-      const interval = setInterval(() => {
-            askNewGames()
-            askUserStats()
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [])
+    React.useEffect(() => {    
+        const interval = setInterval(() => {
+                if (showCurrentGames) {
+                    askNewGames()
+                }
+                askUserStats()
+        }, 5000)
+        return () => clearInterval(interval)
+    }, [showCurrentGames])
 
   const askUserStats = () => {
-    // handleLogout()
     makeGETRequestAuth(`${server}/profile/${props.userdata.id}/stats`, 
                         setUserStats, 
                         "", 
@@ -39,8 +43,8 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson) => void,
       setUserStatsState(data)
   }
   const setShowCurrent = () => {
-       setShowCurrentState(!showCurrent)  
-      if (!showCurrent) {
+      setShow()  
+      if (!showCurrentGames) {
          askNewGames()
       } else {
           makeGETRequestAuth(`${server}/profile/${props.userdata.id}/closed`, 
@@ -49,7 +53,8 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson) => void,
                               props.userdata.accessToken,
                               props.handleLogout)
       }
-  }
+  }               
+
   const askNewGames = () => {
       makeGETRequestAuth(`${server}/profile/${props.userdata.id}/open`, 
                           getNewGames, 
@@ -82,7 +87,6 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson) => void,
   }
   const loadedGameRetrieved = (data: GameData) => {
       let color = (data.player1id == props.userdata.id ? 1 : 0)
-    //   console.log("RECEIVED COLOR = ${}", color, data.player0id, data.player1id, props.userdata.id)
       let gamedata = JSON.parse(data.gameasjson, reviver)       
       gamedata.color = color
       gamedata.id = data._id
@@ -91,9 +95,10 @@ const ProfilePage = (props :{handlechoice: (data:GameAsJson) => void,
       props.handlechoice(gamedata)
       navigate("/game", { replace: true });
   } 
+
   return <ProfilePageHolder userdata={props.userdata}
                             userstats={userstats}
-                            showCurrent={showCurrent}
+                            showCurrent={showCurrentGames}
                             loadGame={loadGame}
                             createNewGame={createNewGame}
                             setShowCurrent={setShowCurrent}

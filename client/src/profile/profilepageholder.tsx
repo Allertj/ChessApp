@@ -12,14 +12,13 @@ interface GameProfileProps {
 }
 
 const createGameProfile = (data: GameProfileProps) => {
-  
   let games =  data.retrievedGames.map((game: GameData) => {
    return <GameProfile key={game._id} 
                          loadGame={data.loadGame}
                          gameid={game._id} 
                          last_change={game.last_change}
                          result={game.result ? game.result : ""}
-                         opponent={(game.player1id === data.userdata.id ? game.player0id : game.player1id)} 
+                         opponent={(game.player1id == data.userdata.id ? game.player0id : game.player1id)} 
                          status={game.status}/>})
    games.sort((a: {props: GameData}, b: {props: GameData}) => {
         return new Date(b.props.last_change).getTime() - new Date(a.props.last_change).getTime();

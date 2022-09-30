@@ -13,6 +13,7 @@ const makePOSTRequest = (address: string, body: any, callback: (data: any)=> voi
   }
   
   const makeGETRequestAuth = (address: string, callback: (data: any) => void, attr: string, token: string, failcallback: () => void) => {  
+    
     const requestOptions = {
       method: 'GET',
       headers: { 'Content-Type': 'application/json',

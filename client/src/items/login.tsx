@@ -12,8 +12,8 @@ const LoginScreen = ({login}: {login: (data: UserData) =>void}) => {
   const handleRequest = (receivedData: UserData | undefined) => { 
     if (!receivedData) {
       updateMessage("Server has not responded.")      
-    } else if (receivedData.message) {
-      updateMessage(receivedData.message)
+    } else if (receivedData.msg) {
+      updateMessage(receivedData.msg)
     } else {
       login(receivedData)
       navigate("/profile", { replace: true });

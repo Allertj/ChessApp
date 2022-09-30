@@ -9,10 +9,10 @@ import {UserData, GameAsJson} from './interfaces/interfaces'
 
 const StandardScreen = ({userdata, chooseGame, saveUserData, handleLogout}: 
                         {userdata: UserData | undefined, 
-                        chooseGame: (data: GameAsJson) => void, 
-                        saveUserData: (data: UserData) => void,
-                        handleLogout: () => void}) => {
-    if (userdata) { 
+                         chooseGame: (data: GameAsJson) => void, 
+                         saveUserData: (data: UserData) => void,
+                         handleLogout: () => void}) => {
+      if (userdata) { 
       return <ProfilePage userdata={userdata} 
                           handlechoice={chooseGame}
                           handleLogout={handleLogout}/>
@@ -25,7 +25,6 @@ const Page = () => {
   let navigate = useNavigate();
   let [gameasjson, setGameAsJson] = React.useState<GameAsJson>()
   let [userdata, setUserData] = React.useState<UserData>() 
-
   const saveUserData = (data : UserData) => {
       localStorage.setItem("userdata", JSON.stringify(data))
       setUserData(data)
@@ -44,6 +43,7 @@ const Page = () => {
   }, [])
 
   const handleLogout = () => {
+      console.log("HANDLELOGOUT TRIGGERED")
       localStorage.removeItem("userdata")
       setUserData(undefined)
       navigate("/login", { replace: true });
@@ -52,7 +52,7 @@ const Page = () => {
                                   handleLogout={handleLogout} 
                                   saveUserData={saveUserData} 
                                   chooseGame={chooseGame}/>
-
+                          
   return (<div className="main-container">
             
             <NavBar handleLogout={handleLogout}  

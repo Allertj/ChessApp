@@ -6,7 +6,7 @@ interface UserData {
     stats : Stats,
     open_games: number,
     roles: Array<string>
-    message?: string
+    msg?: string
 }
 interface Stats {
     W: number, 

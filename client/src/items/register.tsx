@@ -15,17 +15,14 @@ const Register = () => {
 }
     const submitForm = (event: React.FormEvent) => {
         event.preventDefault()
-        makePOSTRequest(`${server}/api/auth/signup`, formData, setMessage, "message")
-
+        makePOSTRequest(`${server}/api/auth/signup`, formData, setMessage, "msg")
       }
     return (<div className='login'>
             <form onSubmit={submitForm}>
                 <div className='center-form'><label>Email</label></div>
                 <div><input type="text" name="email" onChange={setData} value={formData.email}/></div>
-                {/* <div>{message}</div> */}
                 <div className='center-form'><label>Username</label></div>
                 <div><input type="text" name="username" onChange={setData} value={formData.username}/></div>
-                {/* <div>{data.messages.usernamemsg}</div> */}
                 <div className='center-form'><label>Password</label></div>
                 <div><input type="text" name="password" onChange={setData} value={formData.password}/></div>
                 <div>{message}</div>

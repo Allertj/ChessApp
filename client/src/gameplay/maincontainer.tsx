@@ -12,6 +12,7 @@ import { UserData, GameAsJson } from '../interfaces/interfaces'
 
 const verifyMove = (unverified_move: string, id: string, game: Game, socketCom: SocketCom) => {
     let {x, y, destx, desty, sender, color} = JSON.parse(unverified_move)
+    console.log("UNVERIFIED", x, y, destx, desty, sender, color)
     if (game.board[x][y] && sender === id) {
         game.makeMove(game.board, x, y, destx, desty, color)
         document.getElementById(XYString(destx, desty))?.click()         
@@ -42,6 +43,7 @@ const MainContainer = (data: {gamedata: GameAsJson, userdata: UserData}) => {
         }, [data, game])     
         React.useEffect(() => {
             if (data.gamedata.unverified_move) {
+                // console.log(data.gamedata.unverified_move, data.gamed)
                 verifyMove(data.gamedata.unverified_move, data.userdata.id, game, socketCom)
              }
 

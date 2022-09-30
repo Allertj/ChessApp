@@ -5,12 +5,10 @@ interface GameProfileArgs {gameid: string,
                            opponent: string, 
                            loadGame: (data: string) => void}
 
-const parseResult = (result: string, opponent: string) => {
-    // console.log(result)
-    let res = JSON.parse(result);
+const parseResult = (res: any, opponent: number) => {
     if (res.draw === "true") return "Draw"
-    if (res.loser === "true") {return res.loser  !== opponent ? `Lost by ${res.by}` : `Won by ${res.by}`}
-    if (res.winner === "true") {return res.winner !== opponent ? `Won by ${res.by}` : `Lost by ${res.by}`}   
+    if (res.loser !== null) {return res.loser !== opponent ? `Lost by ${res.by}` : `Won by ${res.by}`}
+    if (res.winner !== null) {return res.winner!== opponent ? `Won by ${res.by}` : `Lost by ${res.by}`}   
 }
 
 const getStatus = (status: string, callback: () => void) => {
@@ -20,7 +18,6 @@ const getStatus = (status: string, callback: () => void) => {
         default: return <button onClick={callback}>Resume</button>
     }
 }
-
 const GameProfile = ({ gameid, status, opponent, result, loadGame }: GameProfileArgs) => {
     const chooseGame = () => {
         loadGame(gameid)
@@ -29,7 +26,7 @@ const GameProfile = ({ gameid, status, opponent, result, loadGame }: GameProfile
               <div className="stat">GAME {gameid.slice(-10)}</div>
               <div className="stat">Played Against : {opponent.slice(-10)}</div>
               <div className="stat">Status : {status}</div>
-              {(status === "Ended" && result) && <div className="stat"> {parseResult(result, opponent)}</div>}
+              {status === "Ended" && <div className="stat"> {parseResult(result, parseInt(opponent))}</div>}
               <div className="button">{getStatus(status, chooseGame)}</div>
             </div>)
   }

@@ -1,4 +1,3 @@
-import { server } from '../config'
 import socketIOClient, {Socket} from "socket.io-client";
 
 type Move = {color: number, x: number, y: number, destx: number, desty: number, gameid: string, sender: string}
@@ -29,11 +28,9 @@ class SocketCom {
           id: id
       }})  
     console.log("socket initialized")
-  //   this.socketInit()      
-  // }
-  // socketInit() {
-    this.socket.on("connectaa", (msg) => {
-      console.log("connected to socket:", msg)
+
+    this.socket.on("user_connected", (msg) => {
+      console.log(msg)
     })
     this.socket.on("disconnect", () => {
       console.log("disconnected from socket:", this.socket.id); 
@@ -58,36 +55,7 @@ class SocketCom {
     this.socket.on(connectEvent, callback);
   }
 }
-
-// const SendInitiation   = (socket: Socket, msg: MSGInitiate)     => { socket.emit("initiate", msg)}  
-// const SendMove         = (socket: Socket, msg: MSGMove)         => { socket.emit("move", msg)}                               
-// const SendConcession   = (socket: Socket, msg: MSGConcede)      => { socket.emit("concede", msg)}   
-// const SendProposeDraw  = (socket: Socket, msg: MSGProposeDraw)  => { socket.emit("propose_draw", msg)}                             
-// const SendDrawAccepted = (socket: Socket, msg: MSGDrawAccepted) => { socket.emit("draw_accepted", msg)} 
-// const SendDrawDeclined = (socket: Socket, msg: MSGDrawDeclined) => { socket.emit("draw_declined", msg)}                            
-// const SendMoveVerified = (socket: Socket, msg: MSGMoveVerified) => { socket.emit("move_verified", msg)}   
-// const SendPromotion    = (socket: Socket, msg: MSGPromotion)    => { socket.emit("promotion", msg)}   
-
-// const createSocket = (token: string, id: string) => {
-//     const ENDPOINT = `${server}`;
-//     const socket = socketIOClient(ENDPOINT, {
-//         auth: {
-//             token: token,
-//             id: id
-//         }})
-
-//     socket.on("connectaa", (msg) => {
-//       console.log("connected to socket:", msg)
-//     })
-
-//     socket.on("disconnect", () => {
-//       console.log("disconnected from socket:", socket.id); 
-//     });
-//     return socket
-// }
 export {SocketCom}
 
 export type { Move, MSGPromotion, MSGProposeDraw, MSGDrawFinalized, 
               MSGConcede, MSGMoveVerified, MSGDrawDeclined, MSGDrawAccepted, MSGMove, MSGInitiate }
-// export { createSocket, SendInitiation, SendMove, SendConcession, 
-        //  SendProposeDraw, SendDrawAccepted, SendDrawDeclined, SendMoveVerified, SendPromotion, SocketCom }   
