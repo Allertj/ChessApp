@@ -87,9 +87,10 @@ def move_was_verified(message: dict):
         change_element_in_db(message["move"]["gameid"], value)
         end_game_and_add_statistics(gameid, True, None, None)
         return
+
     game = get_game_by_id(gameid)
-    print("CLEARED 1")
-    print(json.loads(game.unverified_move))
-    # if game.unverified_move == str(message["move"]):
-    if True:
-        change_element_in_db(message["move"]["gameid"], {"gameasjson": message["gameasjson"], "unverified_move": None})
+    if game.unverified_move:
+        currently_stored = json.loads(json.loads(game.unverified_move)["gameasjson"]) 
+        received = json.loads(message["move"]["gameasjson"])
+        if currently_stored == received:
+            change_element_in_db(message["move"]["gameid"], {"gameasjson": message["move"]["gameasjson"], "unverified_move": None})

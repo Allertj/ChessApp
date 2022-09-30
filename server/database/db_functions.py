@@ -132,16 +132,16 @@ def end_game_and_add_statistics(gameid: str, draw: bool, winner: str, loser: str
 
 def create_db(app, database_url: str):
     db.init_app(app) 
-    if not database_exists(database_url):
-        with app.app_context():
-            db.create_all()
+    # if not database_exists(database_url):
+    with app.app_context():
+        db.create_all()
 
-def promote_user_to_admin(userid):
+def promote_user_to_admin(userid: str):
     db.session.add(Admin(adminid=userid))
     db.session.commit()
 
-def delete_user_by_id(userid):
+def delete_user_by_id(userid: str):
     User.query.filter_by(userid=userid).delete()
 
-def demote_user_to_commoner(userid):    
+def demote_user_to_commoner(userid: str):    
     Admin.query.filter_by(adminid=userid).delete()

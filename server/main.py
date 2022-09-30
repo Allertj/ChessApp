@@ -14,7 +14,15 @@ from routing.open_routes import open
 load_dotenv()
 
 app = Flask(__name__)
-database_url = 'sqlite:///database/db.sqlite'
+
+database_url = "postgresql://" + os.environ["DBUSERNAME"] + ":" \
+                               + os.environ["DBPASSWORD"] + "@" \
+                               + os.environ["DBHOST"] + ":" \
+                               + os.environ["DBPORT"] + "/" \
+                               + os.environ["DBDATABASE"]
+
+if str(os.environ["USE_POSTGRESQL"]) == "False":
+    database_url = 'sqlite:///database/db.sqlite'
 app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["JWT_HEADER_NAME"] = "x-access-token"

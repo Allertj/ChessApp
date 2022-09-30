@@ -29,7 +29,7 @@ class Games(db.Model):
     last_change = db.Column(db.DateTime)
     unverified_move = db.Column(db.String(20))
     draw_proposed = db.Column(db.String(20))
-    gameasjson = db.Column(db.String(600))
+    gameasjson = db.Column(db.String(4000))
 
     def __repr__(self):
         return f"""GAME {self.id}, 

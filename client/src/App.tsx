@@ -43,7 +43,6 @@ const Page = () => {
   }, [])
 
   const handleLogout = () => {
-      console.log("HANDLELOGOUT TRIGGERED")
       localStorage.removeItem("userdata")
       setUserData(undefined)
       navigate("/login", { replace: true });

@@ -18,8 +18,6 @@ class Game {
     id : string = "0"
     color: number = 2
     status: string = status1.PLAYING
-    // passed_pawn = new Map()
-    // passed_pawn_removal = new Map()
     passed_pawn_removal : Holder = {}
     passed_pawn: Holder = {}
     castling : Holder = {}
@@ -29,7 +27,6 @@ class Game {
     movescount = 0
     last_selected : Array<number>= []
     constructor(gameInfo:any = null) {
-        console.log("CONSTRUCTOR", this.castling)
         if (this.board.length === 0) {
             this.buildBoard(gameInfo)
         }
@@ -72,10 +69,7 @@ class Game {
         let temp : Array<[number, number]>= [];
         if (this.board[x][y] && this.board[x][y]?.player === player) {
             let poss = this.board[x][y]?.getMovements(this.board, x, y);
-            // console.log([x, y].join(",") in this.passed_pawn, "GETPOSS")
-            console.log([x, y].join(","), this.passed_pawn, "GETPOSS")
             if ([x, y].join(",") in this.passed_pawn) {
-            // if (this.passed_pawn.has([x, y].join(","))) {
                 poss?.push(this.passed_pawn[[x, y].join(",")]);
             }
             poss?.forEach(value => {
@@ -162,16 +156,12 @@ class Game {
     }
     checkPassedPawn(x: number, y: number, destx: number, desty: number, player: Player) {
         if (Math.abs(destx - x) === 2 && this.board[destx][desty - 1] && this.board[destx][desty - 1]?.player !== player) {
-            // this.passed_pawn.set([destx, desty - 1].join(","), [(destx + x) / 2, desty]);
             this.passed_pawn[[destx, desty - 1].join(",")] = [(destx + x) / 2, desty]
             this.passed_pawn_removal[[(destx + x) / 2, desty].join(",")] = [destx, desty];
-            console.log(this.passed_pawn, this.passed_pawn_removal)
         }
         if (Math.abs(destx - x) === 2 && this.board[destx][desty + 1] && this.board[destx][desty + 1]?.player !== player) {
-            // this.passed_pawn.set([destx, desty + 1].join(","), [(destx + x) / 2, desty]);
             this.passed_pawn[[destx, desty + 1].join(",")] =  [(destx + x) / 2, desty]                      
             this.passed_pawn_removal[[(destx + x) / 2, desty].join(",")] = [destx, desty];
-            console.log(this.passed_pawn, this.passed_pawn_removal)
         }
     }
     makeMoveInternal(board: Array<Array<Piece | null>>, x: number, y: number, destx: number, desty: number) {
@@ -182,9 +172,7 @@ class Game {
             board[destx][desty] = temp;
             temp.moved = true
         }
-        // this.passed_pawn.clear();
         this.passed_pawn = {}
-        // this.passed_pawn_removal.clear()
         this.passed_pawn_removal = {}
     }
     makeCastling(x: number, y: number, destx: number, desty: number) {
@@ -199,9 +187,7 @@ class Game {
         this.movescount += 1
         let strike = board[destx][desty] ? " X " : " - "
         this.moves.push([this.board[x][y]?.player, x, y, destx, desty, this.movescount, strike, this.board[x][y]?.letter])
-        // if (player !== this.turn) { return false; }
         if ([x, y].join(",") in this.passed_pawn && board[x][y]?.letter === "P") {
-        // if (this.passed_pawn.has([x, y].join(",")) && board[x][y]?.letter === "P") {
             if (this.passed_pawn[[x, y].join(",")].join(",") === [destx, desty].join(",")) {
                 let [x1, y1] = this.passed_pawn_removal[[destx, desty].join(",")]
                 board[x1][y1] = null
@@ -236,12 +222,8 @@ class Game {
                 if (board[x][y + 1] === null && board[x][y + 2] === null && board[x][y + 3] === null) {
                     let rookmove = this.moveLegal(this.board, x, y + 4, x, y + 3, player);
                     let kingmove = this.moveLegal(this.board, x, y, x, y + 2, player);
-                    if (rookmove && kingmove) {
-                        // va[x, y + 4].join(",") 
-                        let bb = [x, y + 4].join(",")
-                        this.castling[bb] = [x, y]
-                        // this.castling = { aa.join(",") :  [x, y]}
-                        // this.castling.set([x, y + 4].join(","), [x, y]);
+                    if (rookmove && kingmove) { 
+                        this.castling[[x, y + 4].join(",")] = [x, y]
                         possible.push([x, y + 4]);
                     }
                 }
