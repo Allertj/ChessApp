@@ -1,33 +1,22 @@
-name: CI
+# name: ChessApp Continuous Integration - Unittests Backend
 
-on: [push]
+# on: 
+#   push: 
+#     branches:
+#       - master 
 
-jobs:
-  tests:
-    name: Run Python Unittests
-    runs-on: ubuntu-latest
-    # env:
-    #   JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-    #   DB_SECRET_KEY: ${{ secrets.DB_SECRET_KEY }}
-    #   DBUSERNAME: ${{ secrets.DBUSERNAME }}
-    #   DBPASSWORD: ${{ secrets.DBPASSWORD }}
-    #   DBDATABASE: ${{ secrets.DBDATABASE }}
-    steps:
-    - uses: actions/checkout@v1
-    # - uses: actions/setup-python@v2
+# env:
+#   REACT_APP_SECRET: ${{ secrets.REACT_APP_SECRET }}   
 
-    # - uses: syphar/restore-virtualenv@v1
-    #   id: cache-virtualenv
-    #   with:
-    #     requirement_files: requirements.txt
-
-    # - uses: syphar/restore-pip-download-cache@v1
-    #   if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-
-    # - run: pip install Cython
-    # - run: pip install -r requirements.txt
-    #   if: steps.cache-virtualenv.outputs.cache-hit != 'true'
-
-    - run: docker-compose up --build -d
-    # - run: sleep 30s
-    # - run: python unittests.py 
+# jobs: 
+#   deploy: 
+#     runs-on: ubuntu-latest
+#     steps: 
+#       - uses: actions/checkout@master
+#       - uses: actions/setup-node@v1
+#         with: 
+#           node-version: 16          
+#       - run: cp docker/server-package.json ./package.json
+#       - run: npm install
+#       - run: npm install react-scripts@5.0.1 -g 
+#       - run: npm test

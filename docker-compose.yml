@@ -1,14 +1,14 @@
 version: '3.7'
 
 services:
-  postgresqldb:
-    container_name: ${DBHOST}
-    image: postgres:14.1-alpine
-    restart: always
-    environment:
-      - POSTGRES_USER=${DBUSERNAME}
-      - POSTGRES_PASSWORD=${DBPASSWORD}
-      - POSTGRES_DB=${DBDATABASE}
+#   postgresqldb:
+#     container_name: ${DBHOST}
+#     image: postgres:14.1-alpine
+#     restart: always
+#     environment:
+#       - POSTGRES_USER=${DBUSERNAME}
+#       - POSTGRES_PASSWORD=${DBPASSWORD}
+#       - POSTGRES_DB=${DBDATABASE}
     # ports:
       # - "${DBPORT}:5432"
    
